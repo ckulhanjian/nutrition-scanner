@@ -1,0 +1,126 @@
+**TASK:** Act as an expert food data parser. Extract nutritional information, ingredients, allergens, and warnings from the provided "Text to Analyze."
+For any data point not found, use `null`.
+
+**OUTPUT:** Your response MUST be a single JSON object. Do not include any conversational filler or explanations.
+
+**JSON Schema:**
+{{
+  "product_info": {{
+    "serving_size": "string or null",
+    "servings_per_container": "string or null"
+  }},
+  "nutrition_facts": [
+    {{
+      "nutrient_name": "string",
+      "value_per_serving": "string",
+      "daily_value_percent": "string or null"
+    }}
+  ],
+  "ingredients": [
+    "string"
+  ],
+  "allergens": [
+    "string"
+  ],
+  "warnings": "string or null"
+}}
+
+**TEXT TO ANALYZE:**
+{user_text}
+
+
+**Task:**
+Using the extracted `ingredients`, `nutrition_facts`, `allergens`, and `warnings` from TEXT TO ANALYZE, analyze the product against the following dietary filters and your provided knowledge base. 
+Each filter name should perfectly match those listed in "Dietary Filters and Rules".
+For each filter, provide a `result`, a precise `reason` and a list of `cautious-ingredients`. 
+
+
+* **Result Logic:**
+    * **Fail:** The product contains one or more ingredients listed under the filter's **AVOID** rules.
+    * **Caution:** The product contains an ingredient or meets a condition listed under the filter's **WARNING** rules OR a **MONITOR** value has been exceeded based on the `value_per_serving` from `nutrition_facts`.
+    * **Pass:** The product does not contain any ingredients or conditions that trigger a "Fail" or "Caution" result.
+* **Reasoning Details:**
+    * The `reason` string **MUST** be specific. It should directly quote or reference the exact ingredient(s) from the `ingredients` list, allergen from `allergens`, warning from `warnings`, or the specific `nutrient_name` and `value_per_serving` from `nutrition_facts` that triggered the "Fail" or "Caution" result. If passing, state "No conflicting ingredients or nutritional values found."
+* **Dangerous Ingredients:**
+    * The `cautious-ingredients` string should list the ingredients (seperated by commas) that cause th filter to fail. If there are none, it should be set equal to null.
+
+
+**Dietary Filters and Rules**
+* **Anti-Inflammatory Rules:**
+  * **Saturated Fat per Serving:* **
+    * **FAIL:* ** If Saturated Fat > 8g.
+    * **CAUTION:* ** If Saturated Fat is between 5g and 8g.
+    * **PASS:* ** If Saturated Fat <= 4g.
+  * **Added Sugars per Serving:* **
+    * **FAIL:* ** If Added Sugar > 10g.
+    * **CAUTION:* ** If Added Sugar is between 5g and 10g.
+    * **PASS:* ** If Added Sugar <= 4g.
+  * **Ingredients:* **
+    * **FAIL: If ingredients list includes partially hydrogenated oils, refined flour, corn oil, or soybean oil.
+* **Low-Sugar Rules:**
+    * **AVOID:** Sucrose, high-fructose corn syrup, corn syrup solids, maltodextrin.
+    * **MONITOR:** Added sugar > 4g per serving.
+* **Nut Allergy Rules:**
+    * **AVOID:** Peanuts, tree nuts (almonds, walnuts, cashews, pecans, pistachios), Brazil nuts.
+    * **WARNING:** Check for "Contains: [Nut name]" or "Manufactured in a facility that processes nuts."
+* **Halal Rules:**
+    * **AVOID:** Pork, alcohol, animal shortening (unless specified as from a halal source), gelatin from a non-halal source (pork is most common), enzymes from non-halal animals.
+    * **WARNING:** This product cannot be guaranteed Halal unless certified. It may contain ingredients such as 'gelatin' or 'enzymes' that could be from a non-Halal source.
+* **Gluten-Free Rules:**
+    * **AVOID:** Wheat, barley, rye, triticale, spelt, kamut.
+    * **WARNING:** The product may contain cross-contamination. Check for phrases like "Contains: Wheat" or "Manufactured in a facility that processes wheat." Also, be aware of derivatives such as 'modified food starch', 'malt', or 'dextrin' if the source is not specified as gluten-free. Oats are often cross-contaminated unless certified gluten-free.
+* **Lactose Intolerant Rules:**
+    * **AVOID:** Lactose, milk, whey, casein, butter, cream, yogurt, cheese, sour cream, buttermilk, milk solids, milk powder. Also be aware of derivatives like lactalbumin and lactoferrin.
+* **Vegan Rules:**
+    * **AVOID:** Any animal products or by-products, including meat, poultry, fish, eggs, dairy, honey, beeswax, gelatin, casein, whey, carmine, shellac. Also be aware of hidden ingredients like Vitamin D3 from lanolin (sheep's wool).
+* **Vegetarian Rules:**
+    * **AVOID:** Meat, poultry, fish, shellfish, and other animal flesh.
+
+
+**JSON Schema:**
+{{"dietary_analysis": {{
+    "Anti-Inflammatory": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Low-Sugar": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Nut Allergy": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Halal": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Gluten-Free": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Lactose Intolerant": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Vegan": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }},
+    "Vegetarian": {{
+      "result": "string",
+      "reason": "string",
+      "cautious_ingredients": "string or null"
+    }}
+  }}
+}}
+
+**TEXT TO ANALYZE:**
+{user_text}

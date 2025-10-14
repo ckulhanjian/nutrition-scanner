@@ -1,0 +1,173 @@
+{
+  "product_info": {
+    "serving_size": "2 Pastries (96g)",
+    "servings_per_container": "6"
+  },
+  "nutrition_facts": [
+    {
+      "nutrient_name": "Calories",
+      "value_per_serving": "370",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Total Fat",
+      "value_per_serving": "9g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Saturated Fat",
+      "value_per_serving": "3g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Trans Fat",
+      "value_per_serving": "0g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Cholesterol",
+      "value_per_serving": "0mg",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Sodium",
+      "value_per_serving": "320mg",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Total Carbohydrate",
+      "value_per_serving": "70g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Dietary Fiber",
+      "value_per_serving": "1g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Total Sugars",
+      "value_per_serving": "30g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Protein",
+      "value_per_serving": "3g",
+      "daily_value_percent": null
+    },
+    {
+      "nutrient_name": "Vitamin D",
+      "value_per_serving": "0mcg",
+      "daily_value_percent": "0%"
+    },
+    {
+      "nutrient_name": "Iron",
+      "value_per_serving": "1.5mg",
+      "daily_value_percent": "8%"
+    },
+    {
+      "nutrient_name": "Thiamin",
+      "value_per_serving": null,
+      "daily_value_percent": "4%"
+    },
+    {
+      "nutrient_name": "Niacin",
+      "value_per_serving": null,
+      "daily_value_percent": "10%"
+    },
+    {
+      "nutrient_name": "Calcium",
+      "value_per_serving": "10mg",
+      "daily_value_percent": "0%"
+    },
+    {
+      "nutrient_name": "Potassium",
+      "value_per_serving": "50mg",
+      "daily_value_percent": "0%"
+    },
+    {
+      "nutrient_name": "Riboflavin",
+      "value_per_serving": null,
+      "daily_value_percent": "10%"
+    },
+    {
+      "nutrient_name": "Folate",
+      "value_per_serving": "40mcg DFE",
+      "daily_value_percent": "10%"
+    }
+  ],
+  "ingredients": [
+    "Enriched flour (wheat flour, niacin, reduced iron, vitamin B1 [thiamin mononitrate], vitamin B2 [riboflavin], folic acid)",
+    "corn syrup",
+    "high fructose corn syrup",
+    "dextrose",
+    "soybean and palm oil (with TBHQ for freshness)",
+    "sugar",
+    "bleached wheat flour",
+    "wheat starch",
+    "salt",
+    "dried strawberries",
+    "dried pears",
+    "dried apples",
+    "leavening (baking soda, sodium acid pyrophosphate, monocalcium phosphate)",
+    "citric acid",
+    "gelatin",
+    "modified wheat starch",
+    "yellow corn flour",
+    "caramel color",
+    "xanthan gum",
+    "cornstarch",
+    "turmeric extract color",
+    "soy lecithin",
+    "red 40",
+    "yellow 6",
+    "blue 1",
+    "color added"
+  ],
+  "allergens": [
+    "WHEAT",
+    "SOY"
+  ],
+  "warnings": null,
+  "dietary_analysis": {
+    "Anti-Inflammatory": {
+      "result": "Fail",
+      "reason": "Contains high levels of sugars (30g total sugars, assumed added), refined flours (enriched flour, bleached wheat flour), and soybean oil, all of which are pro-inflammatory.",
+      "cautious_ingredients": null
+    },
+    "Low-Sugar": {
+      "result": "Fail",
+      "reason": "Contains multiple sugar sources including high-fructose corn syrup, corn syrup, dextrose, and sugar (sucrose). Total sugars (30g) significantly exceed the caution threshold for added sugar.",
+      "cautious_ingredients": null
+    },
+    "Nut Allergy": {
+      "result": "Pass",
+      "reason": "Does not contain peanuts or tree nuts, and no nut cross-contamination warning is present.",
+      "cautious_ingredients": null
+    },
+    "Halal": {
+      "result": "Caution",
+      "reason": "Contains gelatin whose source is not specified. If not derived from Halal-certified animals, it would be considered non-Halal.",
+      "cautious_ingredients": "gelatin"
+    },
+    "Gluten-Free": {
+      "result": "Fail",
+      "reason": "Contains multiple wheat-derived ingredients including enriched wheat flour, bleached wheat flour, wheat starch, and modified wheat starch.",
+      "cautious_ingredients": null
+    },
+    "Lactose Intolerant": {
+      "result": "Pass",
+      "reason": "Does not contain any milk or lactose-derived ingredients.",
+      "cautious_ingredients": null
+    },
+    "Vegan": {
+      "result": "Fail",
+      "reason": "Contains gelatin, which is an animal-derived product.",
+      "cautious_ingredients": null
+    },
+    "Vegetarian": {
+      "result": "Fail",
+      "reason": "Contains gelatin, which is derived from animal products and is not typically considered vegetarian.",
+      "cautious_ingredients": null
+    }
+  }
+}
