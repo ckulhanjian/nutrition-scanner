@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  
 }
 
 .App-logo {
@@ -35,4 +36,250 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body {
+  background-color: #faf8f5;
+}
+
+.home {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  
+}
+
+.image-label {
+  display: flex;
+  min-width: 400px;
+  min-height: 400px;
+  max-height: 400px;
+  max-width: 150px;
+  border: 2px solid #d4c5b0;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+}
+
+.image-label img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+ .ingredients {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 500px;
+ }
+
+.home-left {
+  display: flex;
+  flex-direction: column;
+  padding-left: 5em;
+  /* align-items: center; */
+  /* padding-right: 5em; */
+  /* gap: 2rem; */
+}
+
+.upload-file p {
+  font-size: 16px;
+  color: gray;
+  margin-top: .5em;
+}
+
+.home-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* FILTERS - 2 COLUMNS */
+.filters-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 2px solid #d4c5b0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-option:hover {
+  background: #f9f6f2;
+  border-color: #c4b5a0;
+  transform: translateX(4px);
+}
+
+.filter-option img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.filter-option input {
+  display: none;
+}
+
+.filter-option.checked {
+  border-color: #4CAF50;
+  background: #f1f8f4;
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.15);
+}
+
+.filter-option.checked:hover {
+  background: #e8f5ea;
+}
+
+/*  BUTTONS  */
+/* BUTTON STYLES */
+.choose-btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #6B8E23;
+  color: white;
+  min-width: 300px;
+}
+
+.choose-btn:hover {
+  background-color: #556B2F;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submit-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #cccccc;
+  color: #666;
+  margin: 8px 0;
+}
+
+.submit-btn:not(:disabled) {
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.submit-btn:not(:disabled):hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.analyze-btn {
+  padding: 16px 48px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #cccccc;
+  color: #666;
+  margin: 20px auto;
+  display: block;
+}
+
+.analyze-btn:not(:disabled) {
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.analyze-btn:not(:disabled):hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.analyze-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+
+
+/*  SPINNER  */
+/* LOADING SPINNER */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 20px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 18px;
+  color: #666;
+  font-weight: 500;
+}
+
+.loading-dots::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Small loading spinner for inline use */
+.small-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4CAF50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 10px auto;
 }
