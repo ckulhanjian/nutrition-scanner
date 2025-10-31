@@ -297,3 +297,33 @@ body {
   animation: spin 1s linear infinite;
   margin: 10px auto;
 }
+
+.results {
+  margin-top: 5rem;
+}
+
+/* ingredient grid */
+.ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 8px; /* space between items */
+}
+
+.ingredient-item {
+  padding: 4px 6px;
+  border-radius: 4px;
+  background-color: #f5f5f5; /* optional */
+  font-size: 14px;
+}
+
+/* result filters */
+.results-list {
+  list-style-type: none; /* removes bullets */
+  padding: 0;            /* remove default padding */
+  margin: 0;             /* remove default margin */
+}
+
+.results-list li {
+  margin-bottom: 8px;    /* space between items */
+  font-size: 16px;       /* optional: adjust font size */
+}

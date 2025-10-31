@@ -45,6 +45,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 # Global variables
 model = None
 ocr = None
+analysis_cache = {}  # Store analysis results by job_id
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -142,31 +143,31 @@ def seed_database_background():
     
     print(f"✅ Database seeded with {len(common_ingredients)} common ingredients")
 
-# def analyze_ingredients_background(job_id, ingredients_list, filters):
-#     """Analyze ingredients in background and store results"""
-#     try:
-#         print(f"🔬 Starting analysis for job {job_id}...")
-#         analysis_cache[job_id]['status'] = 'analyzing'
+def analyze_ingredients_background(job_id, ingredients_list, filters):
+    """Analyze ingredients in background and store results"""
+    try:
+        print(f"🔬 Starting analysis for job {job_id}...")
+        analysis_cache[job_id]['status'] = 'analyzing'
         
-#         # Run the filter_ingredients function
-#         results, failing = filter_ingredients(
-#             ingredients_list,
-#             model,
-#             filters,
-#             similarity_threshold=0.85
-#         )
+        # Run the filter_ingredients function
+        results, failing = filter_ingredients(
+            ingredients_list,
+            model,
+            filters,
+            similarity_threshold=0.85
+        )
         
-#         # Store results
-#         analysis_cache[job_id]['status'] = 'complete'
-#         analysis_cache[job_id]['results'] = results
-#         analysis_cache[job_id]['failing'] = failing
+        # Store results
+        analysis_cache[job_id]['status'] = 'complete'
+        analysis_cache[job_id]['results'] = results
+        analysis_cache[job_id]['failing'] = failing
         
-#         print(f"✅ Analysis complete for job {job_id}")
+        print(f"✅ Analysis complete for job {job_id}")
         
-#     except Exception as e:
-#         print(f"❌ Analysis error for job {job_id}: {e}")
-#         analysis_cache[job_id]['status'] = 'error'
-#         analysis_cache[job_id]['error'] = str(e)
+    except Exception as e:
+        print(f"❌ Analysis error for job {job_id}: {e}")
+        analysis_cache[job_id]['status'] = 'error'
+        analysis_cache[job_id]['error'] = str(e)
 
 # ========== ENDPOINTS ==========
 @app.route('/api/health', methods=['GET'])
