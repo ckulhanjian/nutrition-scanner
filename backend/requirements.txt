@@ -4,3 +4,6 @@ sentence_transformers
 google-generativeai
 flask
 flask-cors
+paddleocr
+paddlepaddle
+numpy

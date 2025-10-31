@@ -72,6 +72,7 @@ body {
 }
 
  .ingredients {
+  padding-top: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -94,6 +95,8 @@ body {
 }
 
 .home-right {
+  margin-top: 3em;
+  /* padding-top: 3em; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -148,7 +151,7 @@ body {
 
 /*  BUTTONS  */
 /* BUTTON STYLES */
-.choose-btn {
+ .choose-btn {
   padding: 12px 20px;
   font-size: 16px;
   font-weight: 600;
@@ -158,13 +161,24 @@ body {
   transition: all 0.3s ease;
   background-color: #6B8E23;
   color: white;
-  min-width: 300px;
+  margin-right: 1em;
 }
 
-.choose-btn:hover {
+/* Only apply hover when not disabled */
+.choose-btn:not(:disabled):hover {
   background-color: #556B2F;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Disabled state */
+.choose-btn:disabled {
+  background-color: #cccccc; /* gray */
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
 }
 
 .submit-btn {

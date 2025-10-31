@@ -15,7 +15,7 @@ def get_embedding_model():
     return _embedding_model
 
 def connect_db():
-    conn = sqlite3.connect("data/ingredients.db")
+    conn = sqlite3.connect("./database/ingredients.db")
     conn.row_factory = sqlite3.Row
     return conn
 

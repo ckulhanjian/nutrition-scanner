@@ -160,8 +160,12 @@ const hasSelectedFilters = filters.some(f => f.checked);
           style={{ display: 'none' }}
         />
         {/* select image */}
-        <button onClick={handleUploadFile} className="choose-btn">Select File
+        <button onClick={handleUploadFile} disabled={uploadingIngredients} className="choose-btn">Select File
         </button>
+        {/* upload image & get ingredients */}
+        <button onClick={handleUploadSubmit} disabled={!selectedFile || uploadingIngredients} className="submit-btn">
+            {uploadingIngredients ? 'Loading...' : 'Get Ingredients'}
+          </button>
         <p>Selected File: {selectedFile ? `${selectedFile.name}` : "No file chosen"}</p>
         </div>
 
@@ -188,13 +192,8 @@ const hasSelectedFilters = filters.some(f => f.checked);
       {/* right side - image, buttons, ingredients */}
       <div className="home-right">
         <div className='image-label'>
-          {selectedFile ? <img className="home-right" src={imagePreview}></img> : <p>Upload an image</p>}
+          {selectedFile ? <img src={imagePreview}></img> : <p>Upload an image</p>}
         </div>
-
-        {/* upload image & get ingredients */}
-        <button onClick={handleUploadSubmit} disabled={!selectedFile || uploadingIngredients} className="submit-btn">
-            {uploadingIngredients ? 'Loading...' : 'Get Ingredients'}
-          </button>
 
         {/* <div className="ingredients">
           {ingredients ? <p>{ingredients}</p> : <p>No ingredients to analyze</p>}
@@ -205,7 +204,7 @@ const hasSelectedFilters = filters.some(f => f.checked);
                 <div className="small-spinner"></div>
                 <p style={{ marginTop: '10px', color: '#666' }}>Extracting ingredients...</p>
               </div>
-            ) : ingredients && ingredients.length > 0 ? (
+            ) : ingredients && ingredients?.length > 0 ? (
               <div style={{ width: '100%' }}>
                 <h3 style={{ marginTop: 0, marginBottom: '15px' }}>{ingredients.length} Ingredients Found!</h3>
                 {/* <ul className="ingredients-list">
