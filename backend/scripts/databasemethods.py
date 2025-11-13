@@ -219,6 +219,7 @@ def get_or_infer_properties(ingredient_name, similarity_threshold=0.85):
     # Try exact match first
     properties = get_ingredient_properties(ingredient_name)
     if properties:
+        print(properties)
         return properties, "exact"
     
     # Try similarity search
@@ -320,3 +321,6 @@ def get_tags(ingredient_name):
             tags.append("contains-lactose")
         return tags
     return None
+
+def main():
+    clear_all_ingredients()

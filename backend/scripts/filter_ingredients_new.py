@@ -130,6 +130,8 @@ def filter_ingredients(ingredients, model, user_filters, similarity_threshold=0.
                 # Properties use same keys as user_filters
                 # 0 = fails filter, 1 = passes filter, None = unknown
                 passes = properties.get(filter_name)
+
+                print(passes)
                 
                 if passes == 0:  # Ingredient fails this filter
                     results[filter_name] = "fail"

@@ -11,24 +11,20 @@ function App() {
   const [failing, setFailing] = useState(null);
   const [status, setStatus] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [uploadingIngredients, setUploadingIngredients] = useState(false);
+  const [uploadingIngredients, setUploadingIngredients] = useState(false); 
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [filters, setFilters] = useState([
+  { id: "lactose", name: "lactose-intolerant", displayName: "Lactose Intolerant", image: "lactose.png", checked: false },
+  { id: "vegan", name: "vegan", displayName: "Vegan", image: "vegan.png", checked: false },
+  { id: "vegetarian", name: "vegetarian", displayName: "Vegetarian", image: "vegetarian.png", checked: false },
+  { id: "halal", name: "halal", displayName: "Halal", image: "halal.png", checked: false },
+  { id: "lowsugar", name: "low-sugar", displayName: "Low-Sugar", image: "low-sugar.png", checked: false },
+  { id: "glutenfree", name: "gluten-free", displayName: "Gluten-Free", image: "gluten-free.png", checked: false },
+]);
 
-  { id: "lactose", name: "Lactose Intolerant", image: "lactose.png", checked: false },
-
-  { id: "vegan", name: "Vegan", image: "vegan.png", checked: false },
-
-  { id: "vegetarian", name: "Vegetarian", image: "vegetarian.png", checked: false },
-
-  { id: "halal", name: "Halal", image: "halal.png", checked: false },
-
-  { id: "lowsugar", name: "Low-Sugar", image: "low-sugar.png", checked: false },
-
-  { id: "glutenfree", name: "Gluten-Free", image: "gluten-free.png", checked: false },
-
-  ]);
   const hasSelectedFilters = filters.some(f => f.checked);
   const fileInputRef = useRef(null);
+  const resultsRef = useRef(null);
   const handleUploadFile = () => {
     fileInputRef.current.click();
   }
@@ -92,7 +88,10 @@ function App() {
     return;
     }
 
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
     console.log({selectedFilters})
+    setIsAnalyzing(true);
     // ingredients and filters
     const response = await fetch("http://127.0.0.1:5002/api/analyze", {
       method: "POST",
@@ -115,12 +114,15 @@ function App() {
         const resultsResponse = await fetch(`http://127.0.0.1:5002/api/results/${jobId}`);
         const resultsData = await resultsResponse.json();
           setResults(resultsData['results']);
+          console.log(results);
           setFailing(resultsData['failing']);
           clearInterval(interval); // stop polling
+          setIsAnalyzing(false);
       }
     } catch (err) {
       setStatus("error");
       clearInterval(interval);
+      setIsAnalyzing(false);
     }
     }, 2000); // poll every 2 seconds
   }
@@ -155,7 +157,7 @@ function App() {
           <div className="filters-container">
           {filters.map(filter => (
           <label
-          key={filter.id}
+          key={filter.displayName}
           className={`filter-option ${filter.checked ? 'checked' : ''}`}
           >
             
@@ -165,7 +167,7 @@ function App() {
           onChange={() => handleFilterToggle(filter.id)}
           />
           <img src={`/icons/${filter.image}`} alt={filter.name} />
-          <span>{filter.name}</span>
+          <span>{filter.displayName}</span>
           </label>
           ))}
           </div>
@@ -199,7 +201,7 @@ function App() {
         </div>
         <button className="analyze-btn" disabled={ingredients.length===0 || !hasSelectedFilters} onClick={analyzeIngredients}>Analyze</button>
         
-        <div className="results">
+        <div className="results" ref={resultsRef}>
           <h1>Ingredients</h1>
           <div className="ingredients-grid">
             {ingredients.map((ingredient, index) => (
@@ -207,18 +209,42 @@ function App() {
             ))}
           </div>
           <h1>Results</h1>
-          {results && Object.keys(results).length > 0 ? (
-          <ul className="results-list">
-            {Object.entries(results).map(([filter, value]) => (
-              <li key={filter}>
-                {filter}: {value ? "✅ Pass" : "❌ Fail"}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No results yet.</p>
-        )}
+          {isAnalyzing ? (
+              <div style={{ textAlign: 'center' }}>
+                <div className="small-spinner"></div>
+                <p style={{ marginTop: '10px', color: '#666' }}>Analyzing ingredients...</p>
+              </div>
+          ) : results && Object.keys(results).length > 0 ? (
+              <div style={{ width: '100%' }}>
+                <ul className="results-list">
+                  {/* {Object.entries(results).map(([filter, value]) => (
+                    <li key={filter}>
+                      {filter.displayName}: {value ? "✅ Pass" : "❌ Fail"}
+                    </li>
+                  ))} */}
+                  {/* {Object.entries(results).map(([filterKey, value]) => {
+                    const filterObj = filters.find(f => f.name === filterKey);
+                    return (
+                      <li key={filterKey}>
+                        {filterObj ? filterObj.displayName : filterKey}: {value ? "✅ Pass" : "❌ Fail"}
+                      </li>
+                    );
+                  })} */}
+                  {Object.entries(results).map(([filterKey, value]) => {
+                    const filterObj = filters.find(f => f.name === filterKey);
+                    const passed = value === "pass"; // convert string → boolean
 
+                    return (
+                      <li key={filterKey}>
+                        {filterObj ? filterObj.displayName : filterKey}: {passed ? "✅ Pass" : "❌ Fail"}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+          ) : (
+              <p>No results yet.</p>
+          )}
         </div>
     </div>
   );
