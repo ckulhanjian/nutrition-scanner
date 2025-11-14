@@ -53,10 +53,6 @@ def allowed_file(filename):
 def initialize_model_and_database():
     """Initialize Gemini model and database on startup"""
     global model, ocr
-
-    # print("🚀 Initializing PaddleOCR...")
-    # ocr = PaddleOCR(use_textline_orientation=True, lang='en')
-    # print("✅ PaddleOCR initialized")
     
     print("🚀 Initializing Gemini model...")
     API_KEY = os.getenv('API_KEY')
@@ -304,6 +300,7 @@ def health_check():
 
 @app.route('/api/upload', methods=['POST'])
 def upload_image():
+    print("Image uploading...")
     """
     Step 1: Upload image and extract ingredients
     Returns ingredients list immediately for frontend display
