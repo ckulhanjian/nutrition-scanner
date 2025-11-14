@@ -2,20 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Button, Image, StyleSheet, Alert, Text, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { API } from "../config";
-import { useRouter } from 'expo-router';
 
 
-const Home = () => {
-  const router = useRouter();
+const Home = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [jobId, setJobId] = useState(null);
   const [uploadingIngredients, setUploadingIngredients] = useState(false); 
   const [isAnalyzing, setIsAnalyzing] = useState(false); 
-  const [fullAnalysis, setFullAnalysis] = useState(false);
-  const [results, setResults] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [failing, setFailing] = useState(null);
+
   const [filters, setFilters] = useState([
     { id: "lactose", name: "lactose-intolerant", displayName: "Lactose Intolerant", image: require("../icons/lactose.png"), checked: false },
     { id: "vegan", name: "vegan", displayName: "Vegan", image: require("../icons/vegan.png"), checked: false },
@@ -25,41 +20,37 @@ const Home = () => {
     { id: "glutenfree", name: "gluten-free", displayName: "Gluten-Free", image: require("../icons/gluten-free.png"), checked: false }
   ]);
 
-  // will also need to check for filters
+  // Auto-upload when image is selected
   useEffect(() => {
     if (image && !uploadingIngredients && ingredients.length === 0) {
-      // alert("UPLOADING!")
       handleUploadSubmit();
     }
   }, [image]);
 
   const takePhoto = async () => {
-    // grant permission
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
       alert("Camera permission required!");
       return;
     }
-    // launch camera
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
     });
-    // make sure it goes through
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      console.log("image set");
+      // Reset ingredients when new image is selected
+      setIngredients([]);
+      setJobId(null);
     }
   };
 
   const uploadPhoto = async () => {
-    // permission
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       alert("Permission required!");
       return;
     }
-    // launch image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
@@ -67,19 +58,18 @@ const Home = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      console.log("image set");
+      // Reset ingredients when new image is selected
+      setIngredients([]);
+      setJobId(null);
     }
   };
 
   const handleUploadSubmit = async () => {
     if (!image) return;
     
-    // get file extension
     const uriParts = image.split('.');
-    // extension is the last item in list
     const fileType = uriParts[uriParts.length - 1].toLowerCase();
     
-    // map file extension to types
     const mimeTypes = {
       'jpg': 'image/jpeg',
       'jpeg': 'image/jpeg',
@@ -87,26 +77,23 @@ const Home = () => {
       'heic': 'image/heic',
       'heif': 'image/heif',
     };
-    // default jpeg
     const mimeType = mimeTypes[fileType] || 'image/jpeg';
     
     const formData = new FormData();
     formData.append("file", {
       uri: image,
-      name: `photo.${fileType}`, // how do we get name - photo ?
+      name: `photo.${fileType}`,
       type: mimeType,
     });
     
-    setUploadingIngredients(true); // start getting ingredients
+    setUploadingIngredients(true);
     try {
-      // alert(`Uploading to: ${API.upload}`); // Show what URL we're using (TESTING)
-      
       const uploadResponse = await fetch(API.upload, {
         method: "POST",
         body: formData,
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (!uploadResponse.ok) {
@@ -114,17 +101,17 @@ const Home = () => {
       }
 
       const { job_id, ingredients } = await uploadResponse.json();
-      // alert(`Success! Found ${ingredients.length} ingredients`);
       setIngredients(ingredients);
       setJobId(job_id);
     } catch (error) {
       alert(`Error: ${error.message}\n\nMake sure:\n1. Backend is running\n2. Phone and computer on same WiFi\n3. API.upload has your computer's IP`);
+      // Reset image on error so user can try again
+      setImage(null);
     } finally {
       setUploadingIngredients(false);
     }
   };
 
-  // filters
   const handleFilterToggle = (id) => {
     setFilters(prev =>
       prev.map(filter =>
@@ -134,39 +121,35 @@ const Home = () => {
   };
 
   const analyzeIngredients = async () => {
-    // Check if ingredients exist
-    // if (!ingredients || ingredients.length === 0) {
-    //   alert("No image uploaded.");
-    //   return;
-    // }
-    setFullAnalysis(true);
+    // Validation
+    if (!image) {
+      alert("Please upload a photo before analyzing");
+      return;
+    }
 
-    // Check if at least one filter is selected
-    const selectedFilters = filters
-      .filter(f => f.checked)
-      .map(f => f.name);
+    const selectedFilters = filters.filter(f => f.checked).map(f => f.name);
     if (selectedFilters.length === 0) {
       alert("Please select at least one filter");
       return;
     }
 
-    // Check if an image was uploaded
-    if (!image) {
-      alert("Please upload a photo.");
+    // CRITICAL: Wait for ingredient extraction to complete
+    if (uploadingIngredients) {
+      alert("Please wait for ingredient extraction to complete...");
       return;
     }
 
-    let attempts = 0;
-      while ((!ingredients || ingredients.length === 0) && attempts < 20) {
-        await new Promise(res => setTimeout(res, 500)); // wait 0.5s
-        attempts++;
-      }
+    if (!ingredients || ingredients.length === 0) {
+      alert("No ingredients detected. Please try uploading a different image.");
+      return;
+    }
 
-      if (!ingredients || ingredients.length === 0) {
-        alert("Ingredients not ready yet. Please try again.");
-        setFullAnalysis(false);
-        return;
-      }
+    if (!jobId) {
+      alert("Upload error. Please try again.");
+      return;
+    }
+
+    setIsAnalyzing(true);
 
     try {
       // Send analysis request
@@ -177,78 +160,99 @@ const Home = () => {
           job_id: jobId,
           ingredients,
           filters: selectedFilters,
-          image_uri: image, // assuming your image object has a 'uri'
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Analysis failed: ${response.status}`);
+      }
+
       const data = await response.json();
-      setStatus("pending");
 
-      // Polling for results every 2 seconds
-      const interval = setInterval(async () => {
-        try {
-          const statusResponse = await fetch(API.status(jobId));
-          const statusData = await statusResponse.json();
+      // Poll for results
+      const pollResults = async () => {
+        return new Promise((resolve, reject) => {
+          const interval = setInterval(async () => {
+            try {
+              const statusResponse = await fetch(API.status(jobId));
+              const statusData = await statusResponse.json();
 
-          if (statusData.status === "complete") {
-            setStatus("complete");
+              if (statusData.status === "complete") {
+                clearInterval(interval);
 
-            // Fetch final results
-            const resultsResponse = await fetch(API.results(jobId));
-            const resultsData = await resultsResponse.json();
+                // Fetch final results
+                const resultsResponse = await fetch(API.results(jobId));
+                const resultsData = await resultsResponse.json();
 
-            setResults(resultsData.results);
-            setFailing(resultsData.failing);
+                resolve(resultsData);
+              } else if (statusData.status === "error") {
+                clearInterval(interval);
+                reject(new Error("Analysis failed on server"));
+              }
+            } catch (err) {
+              clearInterval(interval);
+              reject(err);
+            }
+          }, 2000);
 
+          // Timeout after 60 seconds
+          setTimeout(() => {
             clearInterval(interval);
-            // setIsAnalyzing(false);
-            router.push({
-              pathname: "/results",
-              params: {
-                results: JSON.stringify(resultsData.results),
-                failing: JSON.stringify(resultsData.failing),
-                filters: JSON.stringify(filters.filter(f => f.checked))
-              },
-            });
-          }
-        } catch (err) {
-          console.error("Polling error:", err);
-          setStatus("error");
-          clearInterval(interval);
-          setFullAnalysis(false);
-        }
-      }, 2000);
+            reject(new Error("Analysis timeout"));
+          }, 60000);
+        });
+      };
+
+      const resultsData = await pollResults();
+
+      // Navigate to Results screen
+      navigation.navigate('Results', {
+        results: resultsData.results,
+        failing: resultsData.failing,
+        filters: filters,
+      });
+
     } catch (err) {
       console.error("Analyze request failed:", err);
       alert("Failed to analyze ingredients. Please try again.");
-      setFullAnalysis(false);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      {!fullAnalysis ? (
-        <View style={styles.container}>
       <Text style={styles.title}>Sift</Text>
-      {/* <Text style={styles.subtitle}>
+      <Text style={styles.subtitle}>
         Let's sift through all those ingredients to keep you healthy and safe!
-      </Text> */}
+      </Text>
 
       <Text style={styles.title2}>1. Upload Image</Text>
       <View style={styles.photoButtons}>
-        <TouchableOpacity style={[styles.primaryButton, isAnalyzing && styles.disabledButton]} onPress={takePhoto} disabled={isAnalyzing}>
-          <Text style={styles.buttonText} >Take Photo</Text>
+        <TouchableOpacity style={styles.primaryButton} onPress={takePhoto}>
+          <Text style={styles.buttonText}>Take Photo</Text>
         </TouchableOpacity>
 
         <Text style={styles.orText}>or</Text>
 
-        <TouchableOpacity style={[styles.primaryButton, isAnalyzing && styles.disabledButton]} disabled={isAnalyzing} onPress={uploadPhoto}>
+        <TouchableOpacity style={styles.primaryButton} onPress={uploadPhoto}>
           <Text style={styles.buttonText}>Upload Photo</Text>
         </TouchableOpacity>
       </View>
 
-
-      {image ? (<Text style={styles.uploaded}>Image uploaded ✅</Text>) : (<Text style={styles.uploaded}>No image uploaded</Text>)}
+      {/* Status Messages */}
+      {uploadingIngredients ? (
+        <View style={styles.statusContainer}>
+          <ActivityIndicator size="small" color="#4A90E2" />
+          <Text style={styles.statusText}>Extracting ingredients...</Text>
+        </View>
+      ) : image && ingredients.length > 0 ? (
+        <Text style={styles.uploaded}>✅ Image uploaded • {ingredients.length} ingredients found</Text>
+      ) : image ? (
+        <Text style={styles.uploaded}>⚠️ No ingredients detected</Text>
+      ) : (
+        <Text style={styles.uploaded}>No image uploaded</Text>
+      )}
       
       <Text style={styles.title2}>2. Select all filters</Text>
       <View style={styles.filtersContainer}>
@@ -270,26 +274,20 @@ const Home = () => {
       <TouchableOpacity
         style={[
           styles.analyzeButton,
-          (!image || !filters.some(f => f.checked)) && styles.disabledButton
+          (uploadingIngredients || ingredients.length === 0 || !filters.some(f => f.checked)) && styles.disabledButton
         ]}
         onPress={analyzeIngredients}
-        disabled={!image || !filters.some(f => f.checked)}
+        disabled={uploadingIngredients || ingredients.length === 0 || !filters.some(f => f.checked)}
       >
-        <Text style={styles.analyzeButtonText}>Analyze
+        <Text style={styles.analyzeButtonText}>
+          {isAnalyzing ? "Analyzing..." : "Analyze"}
         </Text>
       </TouchableOpacity>
     </View>
-    ) : (
-      <View>
-        <ActivityIndicator size="large" color="#000000ff" />
-        <Text style={styles.waitingText}>Please wait while ingredients are analyzed.</Text>
-      </View>
-    )}
-    </View>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
@@ -299,81 +297,66 @@ const styles = StyleSheet.create({
   },
   photoButtons: {
     flexDirection: "row",
-    alignItems: "center",      // vertical center
-    justifyContent: "center",  // horizontal center
-    gap: 12,                   // spacing between elements (RN 0.71+)
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
   },
-
   primaryButton: {
     backgroundColor: "#4A90E2",
     paddingVertical: 12,
     paddingHorizontal: 18,
-    borderRadius: 25,          // round pill shape
+    borderRadius: 25,
     minWidth: 120,
     alignItems: "center",
     justifyContent: "center",
-  },
-  waitingText : {
-    margin: 30,
-    fontSize: 24,
-    selfAlign: 'center',
-    textAlign: 'center',
   },
   buttonText: {
     color: "white",
     fontSize: 15,
     fontWeight: "600",
   },
-
   orText: {
     fontSize: 14,
     color: "#555",
     fontWeight: "500",
   },
-  uploaded : {
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 15,
+    gap: 8,
+  },
+  statusText: {
+    color: '#4A90E2',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  uploaded: {
     color: 'gray',
     textAlign: 'center',
     margin: 15,
-    fontWeight: 400,
+    fontWeight: '400',
   },
   title: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
   },
-  title2 : {
-    marginTop: 20,
+  title2: {
+    marginTop: 10,
     marginBottom: 10,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '500',
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 10,
     marginBottom: 40,
     width: '80%',
     textAlign: 'center',
     alignSelf: 'center',
-  },
-  image: {
-    width: 300,
-    height: 300,
-    marginVertical: 20,
-    alignSelf: 'center',
-  },
-  ingredientsContainer: {
-    marginTop: 20,
-  },
-  ingredientsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  ingredient: {
-    fontSize: 14,
-    marginBottom: 5,
   },
   filtersContainer: {
     gap: 10,
@@ -385,7 +368,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 4,
-    width: '90%',
+    width: '48%',
     borderWidth: 2,
     borderColor: "#aaa",
     borderRadius: 25,
@@ -403,22 +386,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     flex: 1,
   },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: "#555",
-    borderRadius: 4,
-  },
-  checkboxChecked: {
-    backgroundColor: "#3ba6de",
-    borderColor: "#3ba6de",
-  },
   analyzeButton: {
     backgroundColor: "#4A90E2",
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderRadius: 25,     // fully rounded
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 50,
@@ -429,6 +401,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   disabledButton: {
-    backgroundColor: "#a0c4e8",   // lighter color when disabled
+    backgroundColor: "#a0c4e8",
   },
-})
+});

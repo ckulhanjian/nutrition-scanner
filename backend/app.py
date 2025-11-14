@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 import threading
 import time
 from paddleocr import PaddleOCR
+import uuid
 
 # Import your existing functions
 from scripts.extract_label import extract_ingredients_hybrid, extract_label
@@ -336,7 +337,9 @@ def upload_image():
         print(f"✅ Extracted {len(ingredients_list)} ingredients")
         
         # # Generate job ID for tracking
-        job_id = f"{int(time.time())}_{filename}"
+        # job_id = f"{int(time.time())}_{filename}"
+        job_id = f"{uuid.uuid4()}_{secure_filename(file.filename)}"
+        print(job_id)
         
         # Clean up uploaded file
         os.remove(filepath)
@@ -439,6 +442,8 @@ def get_results(job_id):
         }), 500
     
     print(job_data['results'])
+    print(job_data['failing'])
+    print(job_data['filters'])
     
     return jsonify({
         'status': 'complete',
