@@ -229,7 +229,7 @@ const Home = () => {
     <View style={styles.container}>
       {!fullAnalysis ? (
         <View style={styles.container}>
-      <Text style={styles.title}>Sift</Text>
+      <Text style={styles.title}>Nouri</Text>
       {/* <Text style={styles.subtitle}>
         Let's sift through all those ingredients to keep you healthy and safe!
       </Text> */}
