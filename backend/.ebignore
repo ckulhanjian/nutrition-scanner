@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Model files (these are HUGE!)
+*.pth
+*.bin
+*.h5
+*.pb
+*.onnx
+*.ckpt
+*.safetensors
+models/
+.cache/
+
+# Sentence transformers cache (downloads models)
+sentence_transformers/
+
+# PaddleOCR models
+.paddleocr/
+inference/
+
+# Uploads folder
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Env files
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Node modules (if any)
+node_modules/
+
+# Large data files
+data/
+*.csv
+*.json
