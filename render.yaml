@@ -31,4 +31,3 @@ services:
 databases:
   - name: ingredients-db
     databaseName: ingredients_db
-    user: postgres
