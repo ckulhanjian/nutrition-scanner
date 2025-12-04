@@ -229,12 +229,12 @@ const Home = () => {
     <View style={styles.container}>
       {!fullAnalysis ? (
         <View style={styles.container}>
-      <Text style={styles.title}>Nouri</Text>
-      {/* <Text style={styles.subtitle}>
-        Let's sift through all those ingredients to keep you healthy and safe!
-      </Text> */}
+        <Image
+          source={require("../icons/logo.png")}
+          style={{ height: 48, width: 160 }}
+        />
 
-      <Text style={styles.title2}>1. Upload Image</Text>
+      <Text style={styles.title2}>Upload Image</Text>
       <View style={styles.photoButtons}>
         <TouchableOpacity style={[styles.primaryButton, isAnalyzing && styles.disabledButton]} onPress={takePhoto} disabled={isAnalyzing}>
           <Text style={styles.buttonText} >Take Photo</Text>
@@ -250,7 +250,7 @@ const Home = () => {
 
       {image ? (<Text style={styles.uploaded}>Image uploaded ✅</Text>) : (<Text style={styles.uploaded}>No image uploaded</Text>)}
       
-      <Text style={styles.title2}>2. Select all filters</Text>
+      <Text style={styles.title2}>Select all filters</Text>
       <View style={styles.filtersContainer}>
         {filters.map((filter) => (
           <Pressable
@@ -296,6 +296,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
+    alignItems: 'center'
   },
   photoButtons: {
     flexDirection: "row",
